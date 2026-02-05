@@ -1,0 +1,5 @@
+python-dotenv
+mistralai
+sqlalchemy
+psycopg2-binary
+pandas

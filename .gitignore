@@ -1,0 +1,4 @@
+.env
+OpenQuote
+__pycache__
+*.pyc
