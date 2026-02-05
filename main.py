@@ -6,17 +6,23 @@ from sqlalchemy import (
     MetaData, Table, Column,
     Integer, Text, Float, Date, create_engine, ForeignKey, Boolean, inspect, text
 )
-from system_prompts import system_prompt, summarise_prompt
+from system_prompts import parse_prompt, summarise_prompt
 
 load_dotenv()
 
 # Initialize Mistral client
+if not os.getenv("MISTRAL_API_KEY"):
+    raise ValueError("MISTRAL_API_KEY not found in environment variables.")
+
 mistral_api_key = os.getenv("MISTRAL_API_KEY")
 model = "mistral-large-latest"
 
 client = Mistral(api_key=mistral_api_key)
 
 # Database Configuration parameters
+if not all([os.getenv("DB_USER"), os.getenv("DB_PASSWORD"), os.getenv("DB_PORT"), os.getenv("DB_NAME")]):
+    raise ValueError("Database configuration parameters (DB_USER, DB_PASSWORD, DB_PORT, DB_NAME) are required in environment variables.")
+
 db_user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 port = os.getenv("DB_PORT")
@@ -116,7 +122,7 @@ def parse_user_query(question: str, retries=3, delay=2) -> str:
             response = client.chat.complete(
                 model=model,
                 messages=[
-                    {"role": "system", "content": system_prompt},
+                    {"role": "system", "content": parse_prompt},
                     {"role": "user", "content": question}
                 ],
                 temperature=0
@@ -163,6 +169,7 @@ def prompt_clarification(reason: str):
 
 ensure_tables_exist()
 
+# Main interaction loop
 while True:
     try:
         question = input('Ask a question (or type "q" to quit): ')

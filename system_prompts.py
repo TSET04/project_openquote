@@ -1,4 +1,5 @@
-system_prompt = """"
+# Prompt to parse the user question 
+parse_prompt = """"
     ##ROLE:
     You are an expert in converting natural language questions into highly optimized SQL queries. 
     You have access to a structured database named `OpenQuoteDB`, which consists of the following tables and their respective columns:
@@ -35,6 +36,7 @@ system_prompt = """"
     Also the sql code should not have ``` in the beginning or end and sql word in output.
 """
 
+# Prompt to summarise the LLM results
 summarise_prompt = """
     ROLE:
     You are an assistant that summarizes SQL query results for end users. 
